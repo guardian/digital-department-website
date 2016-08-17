@@ -1,0 +1,5 @@
+# Guardian Digital Department Website
+
+# Running the app
+1. `sbt run`
+2. Navigate to [localhost:8460](localhost:8460)
