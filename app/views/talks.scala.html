@@ -1,0 +1,6 @@
+@(talks: Seq[Talk])
+
+<h1>List of all the talks:</h1>
+@talks.map{ talk =>
+    <h3>@talk.title</h3>
+}
