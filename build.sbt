@@ -2,7 +2,9 @@ name := "digital-department-website"
 
 version := "1.0"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+def env(key: String): Option[String] = Option(System.getenv(key))
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala, RiffRaffArtifact, JDebPackaging)
     .settings(
       play.sbt.PlayImport.PlayKeys.playDefaultPort := 8460
     )
@@ -16,8 +18,6 @@ libraryDependencies ++= Seq(
 // TODO Default should be changed
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
-enablePlugins(RiffRaffArtifact, JDebPackaging)
-
 import com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
 serverLoading in Debian := Systemd
 debianPackageDependencies := Seq("openjdk-8-jre-headless")
@@ -27,6 +27,6 @@ packageDescription := """Slightly longer description"""
 
 riffRaffPackageType := (packageBin in Debian).value
 
-riffRaffBuildIdentifier := env("TRAVIS_BUILD_NUMBER").getOrElse("DEV")
+riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV")
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
