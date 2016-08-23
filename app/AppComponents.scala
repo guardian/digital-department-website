@@ -13,9 +13,7 @@ import play.api.routing.Router
 trait AWSComponent { self: BuiltInComponents =>
   private val awsCreds = new AWSCredentialsProviderChain(
     new EnvironmentVariableCredentialsProvider(),
-    new SystemPropertiesCredentialsProvider(),
     new ProfileCredentialsProvider("developerPlayground"),
-    new ProfileCredentialsProvider(),
     new InstanceProfileCredentialsProvider()
   )
 
