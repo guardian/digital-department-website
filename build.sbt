@@ -12,7 +12,9 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, RiffRaffArtifact
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-  ws
+  ws,
+  "com.amazonaws" % "aws-java-sdk-core" % "1.10.77",
+  "com.gu" %% "scanamo" % "0.6.0"
 )
 
 // TODO Default should be changed
@@ -30,3 +32,7 @@ riffRaffPackageType := (packageBin in Debian).value
 riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV")
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
+
+routesGenerator := InjectedRoutesGenerator
+
+scalariformSettings
