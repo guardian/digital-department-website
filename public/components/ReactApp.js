@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
-export default class ReactApp extends React.Component {
-
+class ReactApp extends Component {
   render() {
     return (
-      <h1>THIS WORKS</h1>
-    )
+      <div className="ReactApp">
+        <div className="ReactApp-header">
+          <h2>The new Guardian page!</h2>
+        </div>
+      </div>
+    );
   }
 }
+
+export default ReactApp;
