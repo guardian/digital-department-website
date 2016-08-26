@@ -1,0 +1,19 @@
+{
+    "defaultStacks": ["guardian-digital"],
+    "packages":{
+        "guardian-digital-website":{
+            "type":"autoscaling",
+            "data":{
+                "bucket": "guardian-digital-dist"
+            }
+        }
+    },
+    "recipes":{
+        "default":{
+            "actionsBeforeApp": ["guardian-digital.uploadArtifacts", "guardian-digital.deploy"]
+        },
+        "artifactUploadOnly": {
+            "actions": [ "guardian-digital.uploadArtifacts" ]
+        }
+    }
+}
