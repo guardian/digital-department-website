@@ -29,8 +29,8 @@ trait AWSComponent { self: BuiltInComponents =>
 
 trait ControllersComponent {
   self: BuiltInComponents with AWSComponent =>
-  def messagesApi: MessagesApi = new DefaultMessagesApi(environment, configuration, new DefaultLangs(configuration))
-  def appController = new Application(wsClient, dynamoClient, talksTableName)
+  val messagesApi: MessagesApi = new DefaultMessagesApi(environment, configuration, new DefaultLangs(configuration))
+  val appController = new Application(dynamoClient, talksTableName)
 
   val assets = new controllers.Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, assets)

@@ -4,6 +4,6 @@
 1. `sbt run`
 2. Navigate to [localhost:8460](localhost:8460)
 
-./scripts/start.sh
+bundle the JS and run the app: `./scripts/start.sh`
 
-npm run build-dev
+`npm run build-dev`

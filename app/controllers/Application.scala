@@ -1,13 +1,12 @@
 package controllers
 
-import play.api.libs.ws.WSClient
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{ Action, Controller }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import models.Talk
 import com.gu.scanamo._
 import com.gu.scanamo.syntax._
 
-class Application(wsClient: WSClient, dynamoClient: AmazonDynamoDB, talksTableName: String) extends Controller {
+class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends Controller {
 
   def index = Action { req =>
     val jsFileName = "bundle.js"
