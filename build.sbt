@@ -28,5 +28,6 @@ packageDescription := """Slightly longer description"""
 riffRaffPackageType := (packageBin in Debian).value
 
 riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV")
+riffRaffManifestVcsUrl := "git@github.com:guardian/digital-department-website.git"
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
