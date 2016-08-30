@@ -1,9 +1,8 @@
 package controllers
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import models.Talk
+import models._
 import com.gu.scanamo._
-import com.gu.scanamo.syntax._
 import play.api.mvc.{ Action, Controller }
 
 class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends Controller {
@@ -13,8 +12,8 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends 
   }
 
   def talks() = Action {
-    val talks = List.empty //Scanamo.scan[Talk](dynamoClient)(talksTableName)
-    Ok(views.html.talks(talks))
+    val talksList = Scanamo.scan[Talk](dynamoClient)(talksTableName).flatMap(_.toOption)
+    Ok(views.html.talks(talksList))
   }
 }
 

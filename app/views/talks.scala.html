@@ -3,4 +3,8 @@
 <h1>List of all the talks:</h1>
 @talks.map{ talk =>
     <h3>@talk.title</h3>
+    @talk.authors.map { author =>
+        <a href= @author.url><p>@author.name</p></a>
+    }
+    <p>@talk.date</p>
 }
