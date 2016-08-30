@@ -1,7 +1,7 @@
 {
     "defaultStacks": ["guardian-digital"],
     "packages":{
-        "guardian-digital-website":{
+        "digital-department-website":{
             "type":"autoscaling",
             "data":{
                 "bucket": "guardian-digital-dist"
