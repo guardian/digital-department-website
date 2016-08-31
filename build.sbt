@@ -14,7 +14,7 @@ scalaVersion := "2.11.8"
 libraryDependencies ++= Seq(
   ws,
   "com.amazonaws" % "aws-java-sdk-core" % "1.10.77",
-  "com.gu" %% "scanamo" % "0.6.0"
+  "com.gu" %% "scanamo" % "0.7.0"
 )
 
 // TODO Default should be changed

@@ -1,6 +1,8 @@
 package models
 
-import org.joda.time.DateTime
+import org.joda.time._
+import com.gu.scanamo._
+import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType._
 
 case class Author(
   name: String,
@@ -12,7 +14,7 @@ case class Talk(
   url: String,
   authors: Seq[Author],
   location: String,
-  date: DateTime,
+  date: String,
   thumbnail: String)
 
 case class Project(
@@ -31,4 +33,12 @@ case class Events(
   description: String,
   thumbnail: String,
   url: String,
-  date: Option[DateTime])
+  date: DateTime)
+
+object db {
+  implicit val jodaStringFormat = DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](
+    DateTime.parse(_).withZone(DateTimeZone.UTC)
+  )(
+      _.toString
+    )
+}
