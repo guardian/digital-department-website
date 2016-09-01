@@ -35,10 +35,7 @@ case class Events(
   url: String,
   date: DateTime)
 
-object db {
-  implicit val jodaStringFormat = DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](
-    DateTime.parse(_).withZone(DateTimeZone.UTC)
-  )(
-      _.toString
-    )
+object Talk {
+  implicit val jodaStringFormat =
+    DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.UTC))(_.toString)
 }

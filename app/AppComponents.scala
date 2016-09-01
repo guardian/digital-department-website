@@ -1,12 +1,12 @@
 import controllers._
+import controllers._
 import play.api.ApplicationLoader.Context
-import play.api.i18n.{ DefaultLangs, DefaultMessagesApi, MessagesApi }
 import play.api.{ BuiltInComponents, BuiltInComponentsFromContext }
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.routing.Router
 import router.Routes
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{ InstanceProfileCredentialsProvider, SystemPropertiesCredentialsProvider, EnvironmentVariableCredentialsProvider, AWSCredentialsProviderChain }
+import com.amazonaws.auth.{ InstanceProfileCredentialsProvider, EnvironmentVariableCredentialsProvider, AWSCredentialsProviderChain }
 import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 
