@@ -1,6 +1,8 @@
 import controllers._
 import controllers._
 import play.api.ApplicationLoader.Context
+import play.api.i18n.{ DefaultLangs, DefaultMessagesApi, MessagesApi }
+import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ BuiltInComponents, BuiltInComponentsFromContext }
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.routing.Router
@@ -28,7 +30,8 @@ trait AWSComponent { self: BuiltInComponents =>
 
 trait ControllersComponent {
   self: BuiltInComponents with AWSComponent =>
-  def appController = new Application(dynamoClient, talksTableName)
+  def messagesApi: MessagesApi = new DefaultMessagesApi(environment, configuration, new DefaultLangs(configuration))
+  def appController = new Application(dynamoClient, talksTableName, messagesApi)
   val assets = new controllers.Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, assets)
 }

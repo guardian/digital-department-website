@@ -1,23 +1,27 @@
 @(talks: Seq[Talk])
 
-<h1>Talks</h1>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Date</th>
-            <th>Authors</th>
-        </tr>
-    </thead>
-@talks.map{ talk =>
-        <tr>
-            <td>@talk.title</td>
-            <td>@talk.date.toString("dd-MM-yyyy")</td>
-            <td>
+@main("Talks") {
+    <h1>Talks</h1>
+    <a href="@routes.Application.createTalkGet">Add another talk</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Authors</th>
+            </tr>
+        </thead>
+        @talks.map{ talk =>
+            <tr>
+                <td>@talk.title</td>
+                <td>@talk.date.toString("dd-MM-yyyy")</td>
+                <td>
                 @talk.authors.map { author =>
                     <a href="@author.url.getOrElse("")"><img src="@author.avatar.getOrElse("")" height="20"/>@author.name</a>
                 }
-            </td>
-        </tr>
+                </td>
+            </tr>
+        }
+    </table>
 }
-</table>
+

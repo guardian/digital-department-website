@@ -6,9 +6,10 @@ import com.gu.scanamo._
 import org.joda.time.{ DateTimeZone, DateTime }
 import play.api.data._
 import play.api.data.Forms._
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{ Action, Controller }
 
-class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends Controller {
+class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   import Application._
   import Talk.jodaStringFormat
 
@@ -23,17 +24,18 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends 
     Ok(views.html.talks(talksList))
   }
 
-  def createTalkGet() = Action {
+  def createTalkGet() = Action { implicit request =>
     Ok(views.html.createTalk(createTalkForm))
   }
 
-  def createTalk() = Action(parse.form(createTalkForm)) { implicit request =>
+  def createTalk() = Action { implicit request =>
     createTalkForm.bindFromRequest.fold(
       formWithErrors =>
         BadRequest(views.html.createTalk(createTalkForm)),
-      talkData =>
-        // TODO: Save to Dynamo
+      talkData => {
+        val putResult = Scanamo.put(dynamoClient)(talksTableName)(Talk(talkData))
         Redirect(routes.Application.talks())
+      }
     )
   }
 }

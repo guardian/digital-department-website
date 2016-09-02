@@ -1,5 +1,6 @@
 package models
 
+import controllers.Application.CreateTalkFormData
 import org.joda.time._
 import com.gu.scanamo._
 
@@ -19,6 +20,15 @@ case class Talk(
 object Talk {
   implicit val jodaStringFormat =
     DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.UTC))(_.toString)
+
+  def apply(talkData: CreateTalkFormData): Talk = {
+    Talk(title = talkData.title,
+      url = talkData.url,
+      authors = Seq(Author(name = "some author name", url = None, avatar = None)),
+      location = talkData.location,
+      date = talkData.date,
+      thumbnail = talkData.thumbnail)
+  }
 }
 
 case class Project(

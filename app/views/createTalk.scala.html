@@ -1,2 +1,20 @@
-@(talkForm: Form[controllers.Application.CreateTalkFormData])
+@(talkForm: Form[controllers.Application.CreateTalkFormData])(implicit messages: Messages, request: RequestHeader)
+@import b4.vertical.fieldConstructor
 
+@main("Add talk") {
+    <h1>Add a talk</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2 column">
+        @b4.horizontal.form(routes.Application.createTalk, "col-md-2", "col-md-10") { implicit hfc =>
+            @b4.text(talkForm("title"), '_label -> "Title")
+            @b4.url(talkForm("url"), '_label -> "URL")
+            @b4.text(talkForm("location"), '_label -> "Location")
+            @b4.text(talkForm("authors"), '_label -> "Authors")
+            @b4.date(talkForm("date"), '_label -> "Date")
+            @b4.url(talkForm("thumbnail"), '_label -> "Thumbnail URL")
+
+            @b4.submit('class -> "btn btn-primary"){ <span class="glyphicon glyphicon-ok"></span> Submit }
+        }
+        </div>
+    </div>
+}
