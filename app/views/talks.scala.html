@@ -1,10 +1,23 @@
 @(talks: Seq[Talk])
 
-<h1>List of all the talks:</h1>
+<h1>Talks</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Authors</th>
+        </tr>
+    </thead>
 @talks.map{ talk =>
-    <h3>@talk.title</h3>
-    @talk.authors.map { author =>
-        <a href= @author.url><p>@author.name</p></a>
-    }
-    <p>@talk.date</p>
+        <tr>
+            <td>@talk.title</td>
+            <td>@talk.date.toString("dd-MM-yyyy")</td>
+            <td>
+                @talk.authors.map { author =>
+                    <a href="@author.url.getOrElse("")"><img src="@author.avatar.getOrElse("")" height="20"/>@author.name</a>
+                }
+            </td>
+        </tr>
 }
+</table>

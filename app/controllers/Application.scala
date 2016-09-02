@@ -10,6 +10,7 @@ import play.api.mvc.{ Action, Controller }
 
 class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends Controller {
   import Application._
+  import Talk.jodaStringFormat
 
   def index = Action { req =>
     val jsFileName = "bundle.js"
@@ -26,8 +27,14 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends 
     Ok(views.html.createTalk(createTalkForm))
   }
 
-  def createTalkPost() = Action {
-    Ok(views.html.createTalk(createTalkForm))
+  def createTalk() = Action(parse.form(createTalkForm)) { implicit request =>
+    createTalkForm.bindFromRequest.fold(
+      formWithErrors =>
+        BadRequest(views.html.createTalk(createTalkForm)),
+      talkData =>
+        // TODO: Save to Dynamo
+        Redirect(routes.Application.talks())
+    )
   }
 }
 
