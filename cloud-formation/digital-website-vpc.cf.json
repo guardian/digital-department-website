@@ -1,0 +1,320 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Guardian Digital Department website VPC",
+  "Parameters": {
+    "KeyName": {
+      "Description": "The EC2 Key Pair to allow SSH access to the instances",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Default": "guardiandigital"
+    },
+    "InstanceType": {
+      "Description": "EC2 instance type",
+      "Type": "String",
+      "Default": "c3.xlarge",
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    },
+    "MaxInstances" : {
+      "Description": "Maximum number of boxes. This should be double the desired capacity.",
+      "Type": "Number",
+      "Default": 3
+    },
+    "MinInstances" : {
+      "Description": "Minimum number of boxes",
+      "Type": "Number",
+      "Default": 0
+    },
+    "DesiredCapacity" : {
+      "Description": "Desired number of boxes.",
+      "Type": "Number",
+      "Default": 0
+    },
+    "AmiId": {
+      "Description": "Custom AMI to use for instances, created using Packer",
+      "Type": "String",
+      "Default": ""
+    },
+    "Stage": {
+      "Type": "String",
+      "ConstraintDescription": "Stage is an unused parameter."
+    },
+    "GuardianIpBlock": {
+      "Type": "String",
+      "Description": "CIDR block for Guardian IP addresses",
+      "Default": "77.91.248.0/21"
+    },
+    "ScanSafeIpBlock": {
+      "Type": "String",
+      "Description": "CIDR block for ScanSafe IP addresses (temporary while under development)",
+      "Default": "80.254.158.0/24"
+    }
+  },
+
+  "Resources": {
+    "GuardianDigitalVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.248.180.0/22",
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardianDigital"
+          }
+        ]
+      }
+    },
+    "GuardianDigitalSubnetEuWest1a": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.248.180.0/24",
+        "AvailabilityZone": "eu-west-1a",
+        "VpcId": {
+          "Ref": "GuardianDigitalVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardianDigital eu-west-1a"
+          }
+        ]
+      }
+    },
+    "GuardianDigitalSubnetEuWest1b": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.248.181.0/24",
+        "AvailabilityZone": "eu-west-1b",
+        "VpcId": {
+          "Ref": "GuardianDigitalVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardianDigital eu-west-1b"
+          }
+        ]
+      }
+    },
+    "GuardianDigitalSubnetEuWest1c": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.248.182.0/24",
+        "AvailabilityZone": "eu-west-1c",
+        "VpcId": {
+          "Ref": "GuardianDigitalVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardianDigital eu-west-1c"
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardianDigital"
+          }
+        ]
+      }
+    },
+    "VPCNetworkACL": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "Properties": {
+        "VpcId": {
+          "Ref": "GuardianDigitalVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "GuardianDigital"
+          }
+        ]
+      }
+    },
+    "AllowAllEgressTraffic": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": true,
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        }
+      }
+    },
+    "AllowEphemeralTraffic": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "200",
+        "PortRange": {
+          "From": "1024",
+          "To": "65535"
+        },
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        }
+      }
+    },
+    "AllowSSHFromGuardian": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": { "Ref": "GuardianIpBlock" },
+        "Egress": false,
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        }
+      }
+    },
+    "AllowGuardianDigitalAccessFromGuardian": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": { "Ref": "GuardianIpBlock" },
+        "Egress": false,
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "101",
+        "PortRange": {
+          "From": "8111",
+          "To": "8111"
+        },
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        }
+      }
+    },
+    "AllowGuardianDigitalAccessFromScanSafe": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": { "Ref": "ScanSafeIpBlock"},
+        "Egress": false,
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "105",
+        "PortRange": {
+          "From": "8111",
+          "To": "8111"
+        },
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        }
+      }
+    },
+    "GuardianDigitalSubnetEuWest1aSubnetNetworkAclAssociation": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        },
+        "SubnetId": {
+          "Ref": "GuardianDigitalSubnetEuWest1a"
+        }
+      }
+    },
+    "GuardianDigitalSubnetEuWest1bSubnetNetworkAclAssociation": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        },
+        "SubnetId": {
+          "Ref": "GuardianDigitalSubnetEuWest1b"
+        }
+      }
+    },
+    "GuardianDigitalSubnetEuWest1cSubnetNetworkAclAssociation": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "VPCNetworkACL"
+        },
+        "SubnetId": {
+          "Ref": "GuardianDigitalSubnetEuWest1c"
+        }
+      }
+    },
+    "GatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "GuardianDigitalVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "GuardianDigitalRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "GuardianDigitalVPC"
+        }
+      }
+    },
+    "GuardianDigitalSubnetEuWest1aRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "GuardianDigitalRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "GuardianDigitalSubnetEuWest1a"
+        }
+      }
+    },
+    "GuardianDigitalSubnetEuWest1bRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "GuardianDigitalRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "GuardianDigitalSubnetEuWest1b"
+        }
+      }
+    },
+    "GuardianDigitalSubnetEuWest1cRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "GuardianDigitalRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "GuardianDigitalSubnetEuWest1c"
+        }
+      }
+    },
+    "GuardianDigitalRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "GuardianDigitalRouteTable"
+        },
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      },
+      "DependsOn": "GatewayAttachment"
+    }
+  }
+}
