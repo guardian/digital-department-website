@@ -4,7 +4,7 @@
         "digital-department-website":{
             "type":"autoscaling",
             "data":{
-                "bucket": "guardian-digital-dist"
+                "bucket": "guardian-digital-website-dist"
             }
         }
     },

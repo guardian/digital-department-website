@@ -2,11 +2,6 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description" : "New unified Guardian Digital site'",
   "Parameters" : {
-    "VpcId" : {
-      "Type" : "String",
-      "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
-      "Default" : "vpc-381fa95d"
-    },
     "Subnets" : {
       "Type" : "CommaDelimitedList",
       "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
@@ -43,6 +38,23 @@
     }
   },
   "Resources" : {
+
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.248.144.0/22",
+        "Tags": [
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackId"
+            }
+          }
+        ]
+      }
+    },
+
+
     "AutoScalingGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
@@ -195,7 +207,7 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Permit incoming HTTPS access on port 443, egress to port 9000",
-        "VpcId" : { "Ref" : "VpcId" },
+        "VpcId" : { "Ref" : "VPC" },
         "SecurityGroupIngress" : [
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" }
         ],
