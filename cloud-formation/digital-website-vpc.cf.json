@@ -29,9 +29,9 @@
       "Default": 0
     },
     "AmiId": {
-      "Description": "Custom AMI to use for instances, created using Packer",
+      "Description": "AMI to use for instances (taken from contributions-frontend in membership), created using Packer",
       "Type": "String",
-      "Default": ""
+      "Default": "ami-d75f22a4"
     },
     "Stage": {
       "Type": "String",
