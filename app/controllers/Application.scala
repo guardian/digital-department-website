@@ -7,8 +7,10 @@ import play.api.mvc.{ Action, Controller }
 
 class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends Controller {
 
-  def index() = Action {
-    Ok(views.html.index())
+  def index = Action { req =>
+    val jsFileName = "bundle.js"
+    val jsLocation = routes.Assets.versioned(jsFileName).toString
+    Ok(views.html.Application.app("Digital Department Website", jsLocation))
   }
 
   def talks() = Action {
@@ -16,4 +18,3 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String) extends 
     Ok(views.html.talks(talksList))
   }
 }
-

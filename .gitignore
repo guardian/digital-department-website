@@ -1,8 +1,12 @@
 logs
 target
+node_modules/
+
 /.idea
 /.idea_modules
 /.classpath
-/.project
 /.settings
 /RUNNING_PID
+
+public/bundle.js
+project/project
