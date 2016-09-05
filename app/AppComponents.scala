@@ -11,27 +11,24 @@ import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 
 trait AWSComponent { self: BuiltInComponents =>
-  private val awsCreds = new AWSCredentialsProviderChain(
+  lazy private val awsCreds = new AWSCredentialsProviderChain(
     new EnvironmentVariableCredentialsProvider(),
     new ProfileCredentialsProvider("developerPlayground"),
     new InstanceProfileCredentialsProvider()
   )
 
-  private val awsRegion = {
+  lazy private val awsRegion = {
     val r = configuration.getString("aws.region").map(Regions.fromName).getOrElse(Regions.EU_WEST_1)
     Region.getRegion(r)
   }
 
-  val dynamoClient = new AmazonDynamoDBAsyncClient(awsCreds)
-
-  val talksTableName = "digital-development-website-talks"
+  lazy val dynamoClient = awsRegion.createClient(classOf[AmazonDynamoDBAsyncClient], awsCreds, null)
+  lazy val talksTableName = "digital-department-website-talks"
 }
 
 trait ControllersComponent {
   self: BuiltInComponents with AWSComponent =>
-  val messagesApi: MessagesApi = new DefaultMessagesApi(environment, configuration, new DefaultLangs(configuration))
-  val appController = new Application(dynamoClient, talksTableName)
-
+  def appController = new Application(dynamoClient, talksTableName)
   val assets = new controllers.Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, assets)
 }
