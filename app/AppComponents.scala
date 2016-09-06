@@ -1,8 +1,6 @@
 import controllers._
-import controllers._
 import play.api.ApplicationLoader.Context
 import play.api.i18n.{ DefaultLangs, DefaultMessagesApi, MessagesApi }
-import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ BuiltInComponents, BuiltInComponentsFromContext }
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.routing.Router
