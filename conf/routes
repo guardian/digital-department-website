@@ -1,7 +1,7 @@
 # Web endpoints
 GET     /                           controllers.Application.index
 GET     /talks                      controllers.Application.talks
-GET     /talks/create               controllers.Application.createTalkGet
+GET     /talks/create               controllers.Application.createTalkPage
 POST    /talks/create               controllers.Application.createTalk
 
 # Map static resources from the /public folder to the /assets URL path

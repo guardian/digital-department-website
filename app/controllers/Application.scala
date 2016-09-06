@@ -24,7 +24,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, val mess
     Ok(views.html.talks(talksList))
   }
 
-  def createTalkGet() = Action { implicit request =>
+  def createTalkPage() = Action { implicit request =>
     Ok(views.html.createTalk(createTalkForm))
   }
 
