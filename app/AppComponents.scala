@@ -6,7 +6,7 @@ import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.routing.Router
 import router.Routes
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{ InstanceProfileCredentialsProvider, SystemPropertiesCredentialsProvider, EnvironmentVariableCredentialsProvider, AWSCredentialsProviderChain }
+import com.amazonaws.auth.{ InstanceProfileCredentialsProvider, EnvironmentVariableCredentialsProvider, AWSCredentialsProviderChain }
 import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 
@@ -28,7 +28,8 @@ trait AWSComponent { self: BuiltInComponents =>
 
 trait ControllersComponent {
   self: BuiltInComponents with AWSComponent =>
-  def appController = new Application(dynamoClient, talksTableName)
+  def messagesApi: MessagesApi = new DefaultMessagesApi(environment, configuration, new DefaultLangs(configuration))
+  def appController = new Application(dynamoClient, talksTableName, messagesApi)
   val assets = new controllers.Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, assets)
 }
