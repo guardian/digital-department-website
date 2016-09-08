@@ -2,6 +2,7 @@
 @import b4.vertical.fieldConstructor
 
 @layout("Add talk") {
+    <script src="@routes.Assets.versioned("javascripts/addAuthorGroup.js")"></script>
     <h1>Add a talk</h1>
     <div class="row">
         <div class="col-md-6 col-md-offset-2 column">
@@ -9,9 +10,9 @@
             @b4.text(talkForm("title"), '_label -> "Title")
             @b4.url(talkForm("url"), '_label -> "URL")
             @b4.text(talkForm("location"), '_label -> "Location")
-
-            @helpers.authorInput(talkForm("authors[0].name"), 'placeholder -> "Name")(talkForm("authors[0].url"), 'placeholder -> "URL")(talkForm("authors[0].avatar"), 'placeholder -> "Avatar")('_label -> "Author")
-
+            <div id="authors-container">
+                @helpers.authorInput(talkForm("authors[0].name"), 'placeholder -> "Name")(talkForm("authors[0].url"), 'placeholder -> "URL")(talkForm("authors[0].avatar"), 'placeholder -> "Avatar")('_label -> "Author")
+            </div>
             @b4.date(talkForm("date"), '_label -> "Date")
             @b4.url(talkForm("thumbnail"), '_label -> "Thumbnail URL")
 
