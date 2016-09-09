@@ -1,0 +1,19 @@
+@(eventForm: Form[models.Event])(implicit messages: Messages, request: RequestHeader)
+@import b4.vertical.fieldConstructor
+
+@layout("Add event") {
+    <h1>Add a event</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2 column">
+        @b4.horizontal.form(routes.Application.createEvent, "col-md-2", "col-md-10") { implicit hfc =>
+            @b4.text(eventForm("title"), '_label -> "Title")
+            @b4.text(eventForm("description"), '_label -> "Description")
+            @b4.url(eventForm("thumbnail"), '_label -> "Thumbnail URL")
+            @b4.url(eventForm("url"), '_label -> "URL")
+            @b4.date(eventForm("date"), '_label -> "Date")
+
+            @b4.submit('class -> "btn btn-primary"){ <span class="glyphicon glyphicon-ok"></span> Submit }
+        }
+        </div>
+    </div>
+}

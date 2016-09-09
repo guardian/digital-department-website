@@ -1,0 +1,25 @@
+@(activeProjects: Seq[Project], incubatedProjects: Seq[Project])
+@allProjects = @{Map(Project.Active -> activeProjects, Project.Incubated -> incubatedProjects)}
+
+@layout("Projects") {
+    <h1>Projects</h1>
+    <a href="@routes.Application.createProjectPage">Add another project</a>
+    @allProjects.map{ case (status, projectList) =>
+    <h2> @status </h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            @projectList.map{ project =>
+                    <tr>
+                        <td><a href="@project.url">@project.title</a></td>
+                        <td>@project.description</td>
+                    </tr>
+            }
+        </table>
+    }
+}
+

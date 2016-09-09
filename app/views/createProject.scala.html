@@ -1,0 +1,19 @@
+@(projectForm: Form[models.Project])(implicit messages: Messages, request: RequestHeader)
+@import b4.vertical.fieldConstructor
+@import models.Project._
+
+@layout("Add project") {
+    <h1>Add a project</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2 column">
+        @b4.horizontal.form(routes.Application.createProject, "col-md-2", "col-md-10") { implicit hfc =>
+            @b4.text(projectForm("title"), '_label -> "Title")
+            @b4.text(projectForm("description"), '_label -> "Description")
+            @b4.url(projectForm("url"), '_label -> "URL")
+            @b4.select(projectForm("status"), options=Seq(Active -> Active, Incubated -> Incubated), '_label -> "Status")
+
+            @b4.submit('class -> "btn btn-primary"){ <span class="glyphicon glyphicon-ok"></span> Submit }
+        }
+        </div>
+    </div>
+}
