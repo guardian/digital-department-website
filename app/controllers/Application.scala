@@ -9,7 +9,7 @@ import play.api.data.Forms._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{ Action, Controller }
 
-class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTableName: String, projectsTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   import Application._
   import DbFormats.jodaStringFormat
 
@@ -58,6 +58,28 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
       }
     )
   }
+
+  def projects() = Action {
+    val projectsList = Scanamo.scan[Project](dynamoClient)(projectsTableName).flatMap(_.toOption)
+    val activeProjectsList = projectsList.filter(_.status == Project.Active)
+    val incubatedProjectsList = projectsList.filter(_.status == Project.Incubated)
+    Ok(views.html.projects(activeProjectsList, incubatedProjectsList))
+  }
+
+  def createProjectPage() = Action { implicit request =>
+    Ok(views.html.createProject(createProjectForm))
+  }
+
+  def createProject() = Action { implicit request =>
+    createProjectForm.bindFromRequest.fold(
+      formWithErrors =>
+        BadRequest(views.html.createProject(createProjectForm)),
+      projectData => {
+        val putResult = Scanamo.put(dynamoClient)(projectsTableName)(projectData)
+        Redirect(routes.Application.projects())
+      }
+    )
+  }
 }
 
 object Application {
@@ -102,5 +124,14 @@ object Application {
       "date" -> nonEmptyText(maxLength = 200)
         .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString())
     )(Event.apply)(Event.unapply)
+  )
+
+  val createProjectForm: Form[Project] = Form(
+    mapping(
+      "title" -> nonEmptyText(maxLength = 200),
+      "description" -> nonEmptyText(maxLength = 200),
+      "url" -> nonEmptyText(maxLength = 200),
+      "status" -> nonEmptyText(maxLength = 200)
+    )(Project.apply)(Project.unapply)
   )
 }
