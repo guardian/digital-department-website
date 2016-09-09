@@ -6,4 +6,5 @@ $(document).on("click", ".btn-add-author", function() {
     var authorGroup = $('#author-group-' + index).wrap('<div>').parent().html().replace(regex, newIndex);
     $('#author-group-' + index).unwrap();
     $('#authors-container').find('.col-md-10').append(authorGroup);
+    $(this).remove();
 });
