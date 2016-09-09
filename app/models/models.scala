@@ -24,7 +24,7 @@ object Talk {
   def apply(talkData: CreateTalkFormData): Talk = {
     Talk(title = talkData.title,
       url = talkData.url,
-      authors = Seq(Author(name = "some author name", url = None, avatar = None)),
+      authors = talkData.authors.foldLeft(Seq.empty: Seq[Author]) { (seq, author) => seq :+ Author(author.name, author.url, author.avatar) },
       location = talkData.location,
       date = talkData.date,
       thumbnail = talkData.thumbnail)

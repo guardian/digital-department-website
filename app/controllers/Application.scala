@@ -42,18 +42,30 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, val mess
 
 object Application {
 
-  case class CreateTalkFormData(title: String,
+  case class CreateTalkFormData(
+    title: String,
     url: String,
-    authors: String,
+    authors: Seq[AuthorFormData],
     location: String,
     date: DateTime,
     thumbnail: String)
+
+  case class AuthorFormData(
+    name: String,
+    url: Option[String],
+    avatar: Option[String])
 
   val createTalkForm: Form[CreateTalkFormData] = Form(
     mapping(
       "title" -> nonEmptyText(maxLength = 200),
       "url" -> nonEmptyText(maxLength = 200),
-      "authors" -> nonEmptyText(maxLength = 200),
+      "authors" -> seq(
+        mapping(
+          "name" -> nonEmptyText(maxLength = 200),
+          "url" -> optional(text(maxLength = 200)),
+          "avatar" -> optional(text(maxLength = 200))
+        )(AuthorFormData.apply)(AuthorFormData.unapply)
+      ),
       "location" -> nonEmptyText(maxLength = 200),
       "date" -> nonEmptyText(maxLength = 200)
         .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString()),
