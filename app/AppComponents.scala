@@ -24,12 +24,13 @@ trait AWSComponent { self: BuiltInComponents =>
 
   lazy val dynamoClient = awsRegion.createClient(classOf[AmazonDynamoDBAsyncClient], awsCreds, null)
   lazy val talksTableName = "digital-department-website-talks"
+  lazy val eventsTableName = "digital-department-website-events"
 }
 
 trait ControllersComponent {
   self: BuiltInComponents with AWSComponent =>
   def messagesApi: MessagesApi = new DefaultMessagesApi(environment, configuration, new DefaultLangs(configuration))
-  def appController = new Application(dynamoClient, talksTableName, messagesApi)
+  def appController = new Application(dynamoClient, talksTableName, eventsTableName, messagesApi)
   val assets = new controllers.Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, assets)
 }

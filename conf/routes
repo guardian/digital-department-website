@@ -4,5 +4,9 @@ GET     /talks                      controllers.Application.talks
 GET     /talks/create               controllers.Application.createTalkPage
 POST    /talks/create               controllers.Application.createTalk
 
+GET     /events                     controllers.Application.events
+GET     /events/create              controllers.Application.createEventPage
+POST    /events/create              controllers.Application.createEvent
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
