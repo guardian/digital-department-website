@@ -19,8 +19,9 @@ module.exports = {
     ]
   },
   sassLoader: {
-      includePaths: [path.resolve(__dirname, '../style')]
+      includePaths: [path.resolve(__dirname, '../stylesheets')]
   },
+
   plugins: [
       new ExtractTextPlugin('main.css')
   ]
