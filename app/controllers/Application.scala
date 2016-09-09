@@ -9,9 +9,9 @@ import play.api.data.Forms._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{ Action, Controller }
 
-class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   import Application._
-  import Talk.jodaStringFormat
+  import DbFormats.jodaStringFormat
 
   def index = Action { req =>
     val jsFileName = "bundle.js"
@@ -35,6 +35,26 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, val mess
       talkData => {
         val putResult = Scanamo.put(dynamoClient)(talksTableName)(Talk(talkData))
         Redirect(routes.Application.talks())
+      }
+    )
+  }
+
+  def events() = Action {
+    val eventsList = Scanamo.scan[Event](dynamoClient)(eventsTableName).flatMap(_.toOption)
+    Ok(views.html.events(eventsList))
+  }
+
+  def createEventPage() = Action { implicit request =>
+    Ok(views.html.createEvent(createEventForm))
+  }
+
+  def createEvent() = Action { implicit request =>
+    createEventForm.bindFromRequest.fold(
+      formWithErrors =>
+        BadRequest(views.html.createEvent(createEventForm)),
+      eventData => {
+        val putResult = Scanamo.put(dynamoClient)(eventsTableName)(eventData)
+        Redirect(routes.Application.events())
       }
     )
   }
@@ -73,4 +93,14 @@ object Application {
     )(CreateTalkFormData.apply)(CreateTalkFormData.unapply)
   )
 
+  val createEventForm: Form[Event] = Form(
+    mapping(
+      "title" -> nonEmptyText(maxLength = 200),
+      "description" -> nonEmptyText(maxLength = 200),
+      "thumbnail" -> nonEmptyText(maxLength = 200),
+      "url" -> nonEmptyText(maxLength = 200),
+      "date" -> nonEmptyText(maxLength = 200)
+        .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString())
+    )(Event.apply)(Event.unapply)
+  )
 }
