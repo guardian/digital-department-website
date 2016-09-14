@@ -5,6 +5,8 @@ GET     /join-the-team              controllers.Application.index
 GET     /talks                      controllers.Application.talks
 GET     /talks/create               controllers.Application.createTalkPage
 POST    /talks/create               controllers.Application.createTalk
+GET     /talks/:title/edit          controllers.Application.editTalkPage(title: String)
+POST    /talks/:title/edit          controllers.Application.editTalk(title: String)
 
 GET     /events                     controllers.Application.events
 GET     /events/create              controllers.Application.createEventPage
