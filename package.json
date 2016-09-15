@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "Website for Guardian Digital",
   "scripts": {
-    "build": "webpack ./public/index.js --config ./public/build_config/webpack.prod.conf.js",
-    "build-dev": "webpack ./public/index.js --config ./public/build_config/webpack.dev.conf.js --watch"
+    "build": "webpack ./public/index.js --config ./public/build_config/webpack.conf.js",
+    "build-dev": "webpack ./public/index.js --config ./public/build_config/webpack.conf.js --watch"
   },
   "dependencies": {
     "babel-core": "^6.13.2",
