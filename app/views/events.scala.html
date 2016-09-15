@@ -1,0 +1,25 @@
+@(events: Seq[Event])
+
+@layout("Events") {
+    <h1>Events</h1>
+    <a href="@routes.Application.createEventPage">Add another event</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        @events.map{ event =>
+            <tr>
+                <td><img alt="@event.title" src="@event.thumbnail"></td>
+                <td><a href="@event.url">@event.title</a></td>
+                <td>@event.description</td>
+                <td>@event.date.toString("dd-MM-yyyy")</td>
+            </tr>
+        }
+    </table>
+}
+
