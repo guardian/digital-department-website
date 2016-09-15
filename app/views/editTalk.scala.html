@@ -1,4 +1,4 @@
-@(talkForm: Form[models.Forms.TalkFormData])(implicit messages: Messages, request: RequestHeader)
+@(id: String, talkForm: Form[models.Forms.TalkFormData])(implicit messages: Messages, request: RequestHeader)
 @import b4.vertical.fieldConstructor
 
 @layout("Edit talk") {
@@ -6,7 +6,7 @@
     <h1>Edit talk</h1>
     <div class="row">
         <div class="col-md-6 col-md-offset-2 column">
-        @b4.horizontal.form(routes.Application.createTalk, "col-md-2", "col-md-10") { implicit hfc =>
+        @b4.horizontal.form(routes.Application.editTalk(id), "col-md-2", "col-md-10") { implicit hfc =>
             @b4.text(talkForm("title"), '_label -> "Title")
             @b4.url(talkForm("url"), '_label -> "URL")
             @b4.text(talkForm("location"), '_label -> "Location")

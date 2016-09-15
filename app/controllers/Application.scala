@@ -1,19 +1,21 @@
 package controllers
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.gu.scanamo.query.{ Query, KeyEquals }
-import models.Forms.TalkFormData
 import models._
-import com.gu.scanamo._
+import models.Forms._
 import org.joda.time.{ DateTimeZone, DateTime }
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{ Action, Controller }
+import services.DynamoDbService
 
 class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTableName: String, projectsTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   import Application._
-  import DbFormats.jodaStringFormat
+
+  private val talksDynamoDbService = new DynamoDbService[Talk](dynamoClient, talksTableName)
+  private val eventsDynamoDbService = new DynamoDbService[Event](dynamoClient, eventsTableName)
+  private val projectsDynamoDbService = new DynamoDbService[Project](dynamoClient, projectsTableName)
 
   def index = Action { req =>
     val jsFileName = "bundle.js"
@@ -22,7 +24,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   }
 
   def talks() = Action {
-    val talksList = Scanamo.scan[Talk](dynamoClient)(talksTableName).flatMap(_.toOption)
+    val talksList = talksDynamoDbService.scan()
     Ok(views.html.talks(talksList))
   }
 
@@ -33,16 +35,16 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   def createTalk() = Action { implicit request =>
     talkForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.createTalk(talkForm)),
+        BadRequest(views.html.createTalk(formWithErrors)),
       talkData => {
-        val putResult = Scanamo.put(dynamoClient)(talksTableName)(Talk(talkData))
+        talksDynamoDbService.put(Talk(talkData))
         Redirect(routes.Application.talks())
       }
     )
   }
 
   def events() = Action {
-    val eventsList = Scanamo.scan[Event](dynamoClient)(eventsTableName).flatMap(_.toOption)
+    val eventsList = eventsDynamoDbService.scan()
     Ok(views.html.events(eventsList))
   }
 
@@ -53,16 +55,16 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   def createEvent() = Action { implicit request =>
     eventForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.createEvent(eventForm)),
+        BadRequest(views.html.createEvent(formWithErrors)),
       eventData => {
-        val putResult = Scanamo.put(dynamoClient)(eventsTableName)(Event(eventData))
+        eventsDynamoDbService.put(Event(eventData))
         Redirect(routes.Application.events())
       }
     )
   }
 
   def projects() = Action {
-    val projectsList = Scanamo.scan[Project](dynamoClient)(projectsTableName).flatMap(_.toOption)
+    val projectsList = projectsDynamoDbService.scan()
     val activeProjectsList = projectsList.filter(_.status == Project.Active)
     val incubatedProjectsList = projectsList.filter(_.status == Project.Incubated)
     Ok(views.html.projects(activeProjectsList, incubatedProjectsList))
@@ -75,25 +77,27 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   def createProject() = Action { implicit request =>
     projectForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.createProject(projectForm)),
+        BadRequest(views.html.createProject(formWithErrors)),
       projectData => {
-        val putResult = Scanamo.put(dynamoClient)(projectsTableName)(Project(projectData))
+        projectsDynamoDbService.put(Project(projectData))
         Redirect(routes.Application.projects())
       }
     )
   }
 
-  def editTalkPage(title: String) = Action { implicit request =>
-    val getTalkToEdit = Scanamo.query[Talk](dynamoClient)(talksTableName)(Query(KeyEquals('title, title))).flatMap(_.toOption).headOption
-    Ok(views.html.editTalk(talkForm.fill(TalkFormData(getTalkToEdit.get))))
+  def editTalkPage(id: String) = Action { implicit request =>
+    talksDynamoDbService.query(id) match {
+      case Some(talk) => Ok(views.html.editTalk(id, talkForm.fill(TalkFormData(talk))))
+      case None => ???
+    }
   }
 
-  def editTalk(title: String) = Action { implicit request =>
+  def editTalk(id: String) = Action { implicit request =>
     talkForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.editTalk(talkForm)),
+        BadRequest(views.html.editTalk(id, formWithErrors)),
       talkData => {
-        //val putResult = Scanamo.update[Talk](dynamoClient)(talksTableName)('title -> talkData.title, set())
+        talksDynamoDbService.update(id, Talk(talkData))
         Redirect(routes.Application.talks())
       }
     )
