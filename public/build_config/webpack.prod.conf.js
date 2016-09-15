@@ -10,10 +10,10 @@ module.exports = {
               exclude: /node_modules/,
               loaders: ['babel?presets[]=es2015&presets[]=react&plugins[]=transform-object-assign']
             },
-            {
-              test: /\.scss$/,
-              loader: ExtractTextPlugin.extract('style-loader', 'css-loader!sass-loader')
-            },
+            {
+                test: /\.scss$/,
+                loaders: ['style', 'css', 'sass']
+            },
             {
               test: /\.css$/,
               loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
