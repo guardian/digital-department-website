@@ -2,20 +2,26 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description" : "New unified Guardian Digital site'",
   "Parameters" : {
+    "VpcId" : {
+      "Type" : "String",
+      "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
+      "Default" : "vpc-287df44c"
+
+    },
     "Subnets" : {
       "Type" : "CommaDelimitedList",
       "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
-      "Default" : ""
+      "Default" : "subnet-6f79110b, subnet-ebc06ab3,subnet-6f79110b"
     },
     "Stack": {
       "Type": "String",
       "Description": "Applied directly as a tag",
-      "Default" : "flexible"
+      "Default" : "guardian-digital-web"
     },
     "KeyName" : {
       "Description" : "The EC2 Key Pair to allow SSH access to the instance",
       "Type" : "String",
-      "Default" : ""
+      "Default" : "guardian-digital"
     },
     "Stage": {
       "Type" : "String",
@@ -30,7 +36,8 @@
     },
     "ImageId": {
       "Description": "AMI ID",
-      "Type": "String"
+      "Type": "String",
+      "Default": "ami-d75f22a4"
     },
     "ELBSSLCertificate": {
       "Description": "ELB SSL Certificate ARN",
@@ -39,31 +46,15 @@
   },
   "Resources" : {
 
-    "VPC": {
-      "Type": "AWS::EC2::VPC",
-      "Properties": {
-        "CidrBlock": "10.248.144.0/22",
-        "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackId"
-            }
-          }
-        ]
-      }
-    },
-
-
     "AutoScalingGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
         "AvailabilityZones" : { "Fn::GetAZs" : "" },
         "VPCZoneIdentifier" : { "Ref" : "Subnets" },
         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
-        "MinSize" : "2",
-        "MaxSize" : "4",
-        "DesiredCapacity" : "2",
+        "MinSize" : "1",
+        "MaxSize" : "3",
+        "DesiredCapacity" : "1",
         "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ],
         "HealthCheckType" : "ELB",
         "HealthCheckGracePeriod" : 300,
@@ -95,7 +86,7 @@
             { "Fn::Join": [ "", [ "stage=", { "Ref": "Stage"} ] ] },
             "EOF",
 
-            {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/composer-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
+            {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/guardian-digital-website-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
             "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
           ]]
         }}
@@ -207,7 +198,7 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Permit incoming HTTPS access on port 443, egress to port 9000",
-        "VpcId" : { "Ref" : "VPC" },
+        "VpcId" : { "Ref" : "VpcId" },
         "SecurityGroupIngress" : [
           { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" }
         ],
