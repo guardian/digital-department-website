@@ -1,5 +1,5 @@
 {
-    "defaultStacks": ["guardian-digital"],
+    "defaultStacks": ["base-build"],
     "packages":{
         "digital-department-website":{
             "type":"autoscaling",

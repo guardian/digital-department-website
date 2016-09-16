@@ -5,7 +5,7 @@
     "Subnets" : {
       "Type" : "CommaDelimitedList",
       "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
-      "Default" : "subnet-c2620fa7,subnet-2967c870,subnet-2a37bd5d"
+      "Default" : ""
     },
     "Stack": {
       "Type": "String",
@@ -15,7 +15,7 @@
     "KeyName" : {
       "Description" : "The EC2 Key Pair to allow SSH access to the instance",
       "Type" : "String",
-      "Default" : "composer-team"
+      "Default" : ""
     },
     "Stage": {
       "Type" : "String",
