@@ -1,5 +1,7 @@
 # Web endpoints
 GET     /                           controllers.Application.index
+GET     /join-the-team              controllers.Application.index
+
 GET     /talks                      controllers.Application.talks
 GET     /talks/create               controllers.Application.createTalkPage
 POST    /talks/create               controllers.Application.createTalk
@@ -11,5 +13,6 @@ POST    /events/create              controllers.Application.createEvent
 GET     /projects                     controllers.Application.projects
 GET     /projects/create              controllers.Application.createProjectPage
 POST    /projects/create              controllers.Application.createProject
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

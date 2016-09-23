@@ -1,18 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
+import Header from '../components/header/header';
+import Footer from '../components/footer/footer';
 
 require('../stylesheets/main.scss');
 
-class ReactApp extends Component {
+export default class ReactApp extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
-      <div className="ReactApp">
-        <div className="ReactApp-header">
-          <h2>The new Guardian page!</h2>
+      <div>
+        <Header />
+        <div>
+          {this.props.children}
         </div>
+        <Footer />
       </div>
     );
   }
 }
-
-export default ReactApp;
