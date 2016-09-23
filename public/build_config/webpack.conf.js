@@ -15,13 +15,16 @@ module.exports = {
       {
         test: /\.scss$/,
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')
+      },
+      {
+          test: /\.(ttf|eot|svg|gif|jp?eg)(\?v=[0-9].[0-9].[0-9])?$/,
+          loader: "file-loader?name=[name].[ext]"
       }
     ]
   },
   sassLoader: {
       includePaths: [path.resolve(__dirname, '../stylesheets')]
   },
-
   plugins: [
       new ExtractTextPlugin('main.css')
   ]
