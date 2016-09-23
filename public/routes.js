@@ -7,7 +7,7 @@ import Recruitment from './components/recruitment/recruitment';
 
 export default [
     <Route path='/' component={ReactApp}>
-      <Route path='/joinTheTeam' component={Recruitment} />
+      <Route path='/join-the-team' component={Recruitment} />
       <IndexRoute component={Home} />
     </Route>
 ];
