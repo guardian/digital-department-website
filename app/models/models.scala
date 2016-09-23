@@ -38,9 +38,13 @@ case class Talk(
   thumbnail: String)
 
 object Talk {
-  def apply(talkData: TalkFormData): Talk = {
+  def apply(id: Option[String] = None, talkData: TalkFormData): Talk = {
+    val someId = id match {
+      case Some(value) => value
+      case None => UUID.randomUUID().toString
+    }
     Talk(
-      id = UUID.randomUUID().toString,
+      id = someId,
       title = talkData.title,
       url = talkData.url,
       authors = talkData.authors.foldLeft(Seq.empty: Seq[Author]) { (seq, authorFormData) => seq :+ Author(authorFormData) },
