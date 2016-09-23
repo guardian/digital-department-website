@@ -2,16 +2,18 @@ package controllers
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import models._
-import com.gu.scanamo._
+import models.Forms._
 import org.joda.time.{ DateTimeZone, DateTime }
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{ Action, Controller }
+import services.DynamoDbService
 
 class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTableName: String, projectsTableName: String, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   import Application._
-  import DbFormats.jodaStringFormat
+
+  private lazy val dynamoDbService = new DynamoDbService(dynamoClient, talksTableName, eventsTableName, projectsTableName)
 
   def index = Action { req =>
     val jsFileName = "bundle.js"
@@ -20,84 +22,109 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   }
 
   def talks() = Action {
-    val talksList = Scanamo.scan[Talk](dynamoClient)(talksTableName).flatMap(_.toOption)
+    val talksList = dynamoDbService.scanTalks()
     Ok(views.html.talks(talksList))
   }
 
   def createTalkPage() = Action { implicit request =>
-    Ok(views.html.createTalk(createTalkForm))
+    Ok(views.html.createTalk(talkForm))
   }
 
   def createTalk() = Action { implicit request =>
-    createTalkForm.bindFromRequest.fold(
+    talkForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.createTalk(createTalkForm)),
+        BadRequest(views.html.createTalk(formWithErrors)),
       talkData => {
-        val putResult = Scanamo.put(dynamoClient)(talksTableName)(Talk(talkData))
+        dynamoDbService.put(Talk(talkData = talkData))
+        Redirect(routes.Application.talks())
+      }
+    )
+  }
+
+  def editTalkPage(id: String) = Action { implicit request =>
+    dynamoDbService.queryTalks(id) match {
+      case Some(talk) => Ok(views.html.editTalk(id, talkForm.fill(TalkFormData(talk))))
+      case None => ???
+    }
+  }
+
+  def editTalk(id: String) = Action { implicit request =>
+    talkForm.bindFromRequest.fold(
+      formWithErrors =>
+        BadRequest(views.html.editTalk(id, formWithErrors)),
+      talkData => {
+        dynamoDbService.put(Talk(Some(id), talkData))
         Redirect(routes.Application.talks())
       }
     )
   }
 
   def events() = Action {
-    val eventsList = Scanamo.scan[Event](dynamoClient)(eventsTableName).flatMap(_.toOption)
+    val eventsList = dynamoDbService.scanEvents()
     Ok(views.html.events(eventsList))
   }
 
   def createEventPage() = Action { implicit request =>
-    Ok(views.html.createEvent(createEventForm))
+    Ok(views.html.createEvent(eventForm))
   }
 
   def createEvent() = Action { implicit request =>
-    createEventForm.bindFromRequest.fold(
+    eventForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.createEvent(createEventForm)),
+        BadRequest(views.html.createEvent(formWithErrors)),
       eventData => {
-        val putResult = Scanamo.put(dynamoClient)(eventsTableName)(eventData)
+        dynamoDbService.put(Event(eventData))
         Redirect(routes.Application.events())
       }
     )
   }
 
+  //  def editEventPage(id: String) = Action { implicit request =>
+  //    dynamoDbService.queryEvents(id) match {
+  //      case Some(event) => Ok(views.html.editEvent(id, eventForm.fill(EventFormData(event))))
+  //      case None => ???
+  //    }
+  //  }
+  //
+  //  def editEvent(id: String) = Action { implicit request =>
+  //    eventForm.bindFromRequest.fold(
+  //      formWithErrors =>
+  //        BadRequest(views.html.editEvent(id, formWithErrors)),
+  //      eventData => {
+  //        dynamoDbService.updateEvent(id, Event(eventData))
+  //        Redirect(routes.Application.events())
+  //      }
+  //    )
+  //  }
+
   def projects() = Action {
-    val projectsList = Scanamo.scan[Project](dynamoClient)(projectsTableName).flatMap(_.toOption)
+    val projectsList = dynamoDbService.scanProjects()
     val activeProjectsList = projectsList.filter(_.status == Project.Active)
     val incubatedProjectsList = projectsList.filter(_.status == Project.Incubated)
     Ok(views.html.projects(activeProjectsList, incubatedProjectsList))
   }
 
   def createProjectPage() = Action { implicit request =>
-    Ok(views.html.createProject(createProjectForm))
+    Ok(views.html.createProject(projectForm))
   }
 
   def createProject() = Action { implicit request =>
-    createProjectForm.bindFromRequest.fold(
+    projectForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.createProject(createProjectForm)),
+        BadRequest(views.html.createProject(formWithErrors)),
       projectData => {
-        val putResult = Scanamo.put(dynamoClient)(projectsTableName)(projectData)
+        dynamoDbService.put(Project(projectData))
         Redirect(routes.Application.projects())
       }
     )
   }
+
 }
 
 object Application {
+  import models.Forms._
 
-  case class CreateTalkFormData(
-    title: String,
-    url: String,
-    authors: Seq[AuthorFormData],
-    location: String,
-    date: DateTime,
-    thumbnail: String)
-
-  case class AuthorFormData(
-    name: String,
-    url: Option[String],
-    avatar: Option[String])
-
-  val createTalkForm: Form[CreateTalkFormData] = Form(
+  val talkForm: Form[TalkFormData] = Form(
     mapping(
       "title" -> nonEmptyText(maxLength = 200),
       "url" -> nonEmptyText(maxLength = 200),
@@ -112,10 +139,10 @@ object Application {
       "date" -> nonEmptyText(maxLength = 200)
         .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString()),
       "thumbnail" -> nonEmptyText(maxLength = 200)
-    )(CreateTalkFormData.apply)(CreateTalkFormData.unapply)
+    )(TalkFormData.apply)(TalkFormData.unapply)
   )
 
-  val createEventForm: Form[Event] = Form(
+  val eventForm: Form[EventFormData] = Form(
     mapping(
       "title" -> nonEmptyText(maxLength = 200),
       "description" -> nonEmptyText(maxLength = 200),
@@ -123,15 +150,15 @@ object Application {
       "url" -> nonEmptyText(maxLength = 200),
       "date" -> nonEmptyText(maxLength = 200)
         .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString())
-    )(Event.apply)(Event.unapply)
+    )(EventFormData.apply)(EventFormData.unapply)
   )
 
-  val createProjectForm: Form[Project] = Form(
+  val projectForm: Form[ProjectFormData] = Form(
     mapping(
       "title" -> nonEmptyText(maxLength = 200),
       "description" -> nonEmptyText(maxLength = 200),
       "url" -> nonEmptyText(maxLength = 200),
       "status" -> nonEmptyText(maxLength = 200)
-    )(Project.apply)(Project.unapply)
+    )(ProjectFormData.apply)(ProjectFormData.unapply)
   )
 }

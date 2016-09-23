@@ -8,17 +8,24 @@
             <tr>
                 <th>Title</th>
                 <th>Date</th>
+                <th>Location</th>
                 <th>Authors</th>
+                <th>Actions</th>
             </tr>
         </thead>
         @talks.map{ talk =>
             <tr>
                 <td>@talk.title</td>
                 <td>@talk.date.toString("dd-MM-yyyy")</td>
+                <td>@talk.location</td>
                 <td>
                 @talk.authors.map { author =>
                     <a href="@author.url.getOrElse("")"><img src="@author.avatar.getOrElse("")" height="20"/>@author.name</a>
                 }
+                </td>
+                <td>
+                    <a href="@routes.Application.editTalkPage(talk.id)">Edit</a>
+                    <a href="#">Delete</a>
                 </td>
             </tr>
         }
