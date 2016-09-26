@@ -81,7 +81,6 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
 
   def editEventPage(id: String) = Action { implicit request =>
     val event = dynamoDbService.queryEvents(id)
-    println("event", event)
     event match {
       case Some(event) => Ok(views.html.editEvent(id, eventForm.fill(EventFormData(event))))
       case None => ???
@@ -115,7 +114,26 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
       formWithErrors =>
         BadRequest(views.html.createProject(formWithErrors)),
       projectData => {
-        dynamoDbService.put(Project(projectData))
+        dynamoDbService.put(Project(projectData = projectData))
+        Redirect(routes.Application.projects())
+      }
+    )
+  }
+
+  def editProjectPage(id: String) = Action { implicit request =>
+    val project = dynamoDbService.queryProjects(id)
+    project match {
+      case Some(project) => Ok(views.html.editProject(id, projectForm.fill(ProjectFormData(project))))
+      case None => ???
+    }
+  }
+
+  def editProject(id: String) = Action { implicit request =>
+    projectForm.bindFromRequest.fold(
+      formWithErrors =>
+        BadRequest(views.html.editProject(id, formWithErrors)),
+      projectData => {
+        dynamoDbService.put(Project(Some(id), projectData))
         Redirect(routes.Application.projects())
       }
     )

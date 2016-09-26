@@ -59,9 +59,13 @@ object Project {
   val Active = "Active"
   val Incubated = "Incubated"
 
-  def apply(projectData: ProjectFormData): Project = {
+  def apply(id: Option[String] = None, projectData: ProjectFormData): Project = {
+    val someId = id match {
+      case Some(value) => value
+      case None => UUID.randomUUID().toString
+    }
     transform[ProjectFormData, Project](projectData,
-      "id" -> UUID.randomUUID().toString
+      "id" -> someId
     )
   }
 }

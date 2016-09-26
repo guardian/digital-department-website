@@ -17,6 +17,8 @@ POST    /events/:id/edit            controllers.Application.editEvent(id: String
 GET     /projects                   controllers.Application.projects
 GET     /projects/create            controllers.Application.createProjectPage
 POST    /projects/create            controllers.Application.createProject
+GET     /projects/:id/edit          controllers.Application.editProjectPage(id: String)
+POST    /projects/:id/edit          controllers.Application.editProject(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
