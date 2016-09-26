@@ -18,6 +18,10 @@
                 <td><a href="@event.url">@event.title</a></td>
                 <td>@event.description</td>
                 <td>@event.date.toString("dd-MM-yyyy")</td>
+                <td>
+                    <a href="@routes.Application.editEventPage(event.id)">Edit</a>
+                    <a href="#">Delete</a>
+                </td>
             </tr>
         }
     </table>

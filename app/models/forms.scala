@@ -46,6 +46,17 @@ object Forms {
     url: String,
     date: DateTime)
 
+  object EventFormData {
+    def apply(event: Event): EventFormData = {
+      EventFormData(
+        title = event.title,
+        description = event.description,
+        thumbnail = event.thumbnail,
+        url = event.url,
+        date = event.date)
+    }
+  }
+
   case class ProjectFormData(
     title: String,
     description: String,

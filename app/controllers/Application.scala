@@ -73,29 +73,31 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
       formWithErrors =>
         BadRequest(views.html.createEvent(formWithErrors)),
       eventData => {
-        dynamoDbService.put(Event(eventData))
+        dynamoDbService.put(Event(eventData = eventData))
         Redirect(routes.Application.events())
       }
     )
   }
 
-  //  def editEventPage(id: String) = Action { implicit request =>
-  //    dynamoDbService.queryEvents(id) match {
-  //      case Some(event) => Ok(views.html.editEvent(id, eventForm.fill(EventFormData(event))))
-  //      case None => ???
-  //    }
-  //  }
-  //
-  //  def editEvent(id: String) = Action { implicit request =>
-  //    eventForm.bindFromRequest.fold(
-  //      formWithErrors =>
-  //        BadRequest(views.html.editEvent(id, formWithErrors)),
-  //      eventData => {
-  //        dynamoDbService.updateEvent(id, Event(eventData))
-  //        Redirect(routes.Application.events())
-  //      }
-  //    )
-  //  }
+  def editEventPage(id: String) = Action { implicit request =>
+    val event = dynamoDbService.queryEvents(id)
+    println("event", event)
+    event match {
+      case Some(event) => Ok(views.html.editEvent(id, eventForm.fill(EventFormData(event))))
+      case None => ???
+    }
+  }
+
+  def editEvent(id: String) = Action { implicit request =>
+    eventForm.bindFromRequest.fold(
+      formWithErrors =>
+        BadRequest(views.html.editEvent(id, formWithErrors)),
+      eventData => {
+        dynamoDbService.put(Event(Some(id), eventData))
+        Redirect(routes.Application.events())
+      }
+    )
+  }
 
   def projects() = Action {
     val projectsList = dynamoDbService.scanProjects()

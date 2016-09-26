@@ -11,6 +11,8 @@ POST    /talks/:id/edit             controllers.Application.editTalk(id: String)
 GET     /events                     controllers.Application.events
 GET     /events/create              controllers.Application.createEventPage
 POST    /events/create              controllers.Application.createEvent
+GET     /events/:id/edit            controllers.Application.editEventPage(id: String)
+POST    /events/:id/edit            controllers.Application.editEvent(id: String)
 
 GET     /projects                   controllers.Application.projects
 GET     /projects/create            controllers.Application.createProjectPage

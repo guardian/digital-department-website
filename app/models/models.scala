@@ -86,9 +86,13 @@ case class Event(
   date: DateTime)
 
 object Event {
-  def apply(eventData: EventFormData): Event = {
+  def apply(id: Option[String] = None, eventData: EventFormData): Event = {
+    val someId = id match {
+      case Some(value) => value
+      case None => UUID.randomUUID().toString
+    }
     Event(
-      id = UUID.randomUUID().toString,
+      id = someId,
       title = eventData.title,
       description = eventData.description,
       thumbnail = eventData.thumbnail,
