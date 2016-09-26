@@ -1,0 +1,20 @@
+@(id: String, projectForm: Form[models.Forms.ProjectFormData])(implicit messages: Messages, request: RequestHeader)
+@import b4.vertical.fieldConstructor
+@statuses = @{ Seq("Active" -> "Active", "Incubated" -> "Incubated") }
+
+@layout("Edit project") {
+    <script src="@routes.Assets.versioned("javascripts/addAuthorGroup.js")"></script>
+    <h1>Edit project</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2 column">
+        @b4.horizontal.form(routes.Application.editProject(id), "col-md-2", "col-md-10") { implicit hfc =>
+            @b4.text(projectForm("title"), '_label -> "Title")
+            @b4.text(projectForm("description"), '_label -> "Description")
+            @b4.url(projectForm("url"), '_label -> "URL")
+            @b4.select(projectForm("status"), options=statuses, '_label -> "Status")
+
+            @b4.submit('class -> "btn btn-primary"){ <span class="glyphicon glyphicon-ok"></span> Submit }
+        }
+        </div>
+    </div>
+}
