@@ -14,7 +14,7 @@
         </thead>
         @events.map{ event =>
             <tr>
-                <td><img alt="@event.title" src="@event.thumbnail"></td>
+                <td><img alt="@event.title" src="@event.thumbnail" height="20"></td>
                 <td><a href="@event.url">@event.title</a></td>
                 <td>@event.description</td>
                 <td>@event.date.toString("dd-MM-yyyy")</td>

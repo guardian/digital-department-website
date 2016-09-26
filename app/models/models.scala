@@ -5,6 +5,7 @@ import java.util.UUID
 import models.Forms.{ EventFormData, ProjectFormData, TalkFormData, AuthorFormData }
 import org.joda.time._
 import com.gu.scanamo._
+import automagic._
 
 object DbFormats {
   implicit val jodaStringFormat =
@@ -19,11 +20,8 @@ case class Author(
 
 object Author {
   def apply(authorData: AuthorFormData): Author = {
-    Author(
-      id = UUID.randomUUID().toString,
-      name = authorData.name,
-      url = authorData.url,
-      avatar = authorData.avatar
+    transform[AuthorFormData, Author](authorData,
+      "id" -> UUID.randomUUID().toString
     )
   }
 }
@@ -43,14 +41,9 @@ object Talk {
       case Some(value) => value
       case None => UUID.randomUUID().toString
     }
-    Talk(
-      id = someId,
-      title = talkData.title,
-      url = talkData.url,
-      authors = talkData.authors.foldLeft(Seq.empty: Seq[Author]) { (seq, authorFormData) => seq :+ Author(authorFormData) },
-      location = talkData.location,
-      date = talkData.date,
-      thumbnail = talkData.thumbnail
+    transform[TalkFormData, Talk](talkData,
+      "id" -> someId,
+      "authors" -> talkData.authors.foldLeft(Seq.empty: Seq[Author]) { (seq, authorFormData) => seq :+ Author(authorFormData) }
     )
   }
 }
@@ -67,12 +60,8 @@ object Project {
   val Incubated = "Incubated"
 
   def apply(projectData: ProjectFormData): Project = {
-    Project(
-      id = UUID.randomUUID().toString,
-      title = projectData.title,
-      description = projectData.description,
-      url = projectData.url,
-      status = projectData.status
+    transform[ProjectFormData, Project](projectData,
+      "id" -> UUID.randomUUID().toString
     )
   }
 }
@@ -91,13 +80,8 @@ object Event {
       case Some(value) => value
       case None => UUID.randomUUID().toString
     }
-    Event(
-      id = someId,
-      title = eventData.title,
-      description = eventData.description,
-      thumbnail = eventData.thumbnail,
-      url = eventData.url,
-      date = eventData.date
+    transform[EventFormData, Event](eventData,
+      "id" -> someId
     )
   }
 }
