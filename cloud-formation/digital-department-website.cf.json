@@ -11,7 +11,7 @@
     "Subnets" : {
       "Type" : "CommaDelimitedList",
       "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
-      "Default" : "subnet-6f79110b, subnet-ebc06ab3,subnet-6f79110b"
+      "Default" : "subnet-c682e7b0, subnet-ebc06ab3,subnet-6f79110b"
     },
     "Stack": {
       "Type": "String",
@@ -38,10 +38,6 @@
       "Description": "AMI ID",
       "Type": "String",
       "Default": "ami-d75f22a4"
-    },
-    "ELBSSLCertificate": {
-      "Description": "ELB SSL Certificate ARN",
-      "Type": "String"
     }
   },
   "Resources" : {
@@ -49,7 +45,7 @@
     "AutoScalingGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
-        "AvailabilityZones" : { "Fn::GetAZs" : "" },
+        "AvailabilityZones" : { "Fn::GetAZs" : "eu-west-1" },
         "VPCZoneIdentifier" : { "Ref" : "Subnets" },
         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
         "MinSize" : "1",
@@ -174,10 +170,9 @@
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
         "Listeners" : [ {
-          "LoadBalancerPort": "443",
+          "LoadBalancerPort": "80",
           "InstancePort": 9000,
-          "Protocol": "HTTPS",
-          "SSLCertificateId" : { "Ref" : "ELBSSLCertificate" }
+          "Protocol": "HTTP"
         }],
         "SecurityGroups" : [ { "Ref" : "LoadBalancerSecurityGroup" } ],
         "Subnets" : { "Ref" : "Subnets" },
