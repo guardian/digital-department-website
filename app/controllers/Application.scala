@@ -3,7 +3,6 @@ package controllers
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import models._
 import models.Forms._
-import org.joda.time.{ DateTimeZone, DateTime }
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -43,15 +42,15 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
 
   def editTalkPage(id: String) = Action { implicit request =>
     dynamoDbService.queryTalks(id) match {
-      case Some(talk) => Ok(views.html.editTalk(id, talkForm.fill(TalkFormData(talk))))
-      case None => ???
+      case Some(talk) => Ok(views.html.editTalk(id, talkForm.fill(TalkFormData(talk)), talk.authors.length))
+      case None => NotFound
     }
   }
 
   def editTalk(id: String) = Action { implicit request =>
     talkForm.bindFromRequest.fold(
       formWithErrors =>
-        BadRequest(views.html.editTalk(id, formWithErrors)),
+        BadRequest(views.html.editTalk(id, formWithErrors, formWithErrors.get.authors.length)),
       talkData => {
         dynamoDbService.put(Talk(Some(id), talkData))
         Redirect(routes.Application.talks())
@@ -83,7 +82,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
     val event = dynamoDbService.queryEvents(id)
     event match {
       case Some(event) => Ok(views.html.editEvent(id, eventForm.fill(EventFormData(event))))
-      case None => ???
+      case None => NotFound
     }
   }
 
@@ -124,7 +123,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
     val project = dynamoDbService.queryProjects(id)
     project match {
       case Some(project) => Ok(views.html.editProject(id, projectForm.fill(ProjectFormData(project))))
-      case None => ???
+      case None => NotFound
     }
   }
 
@@ -153,11 +152,10 @@ object Application {
           "name" -> nonEmptyText(maxLength = 200),
           "url" -> optional(text(maxLength = 200)),
           "avatar" -> optional(text(maxLength = 200))
-        )(AuthorFormData.apply)(AuthorFormData.unapply)
+        )(Author.apply)(Author.unapply)
       ),
       "location" -> nonEmptyText(maxLength = 200),
-      "date" -> nonEmptyText(maxLength = 200)
-        .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString()),
+      "date" -> jodaDate,
       "thumbnail" -> nonEmptyText(maxLength = 200)
     )(TalkFormData.apply)(TalkFormData.unapply)
   )
@@ -168,8 +166,7 @@ object Application {
       "description" -> nonEmptyText(maxLength = 200),
       "thumbnail" -> nonEmptyText(maxLength = 200),
       "url" -> nonEmptyText(maxLength = 200),
-      "date" -> nonEmptyText(maxLength = 200)
-        .transform(date => DateTime.parse(date).withZone(DateTimeZone.UTC), (date: DateTime) => date.toString())
+      "date" -> jodaDate
     )(EventFormData.apply)(EventFormData.unapply)
   )
 

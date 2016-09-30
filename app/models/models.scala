@@ -2,29 +2,14 @@ package models
 
 import java.util.UUID
 
-import models.Forms.{ EventFormData, ProjectFormData, TalkFormData, AuthorFormData }
-import org.joda.time._
-import com.gu.scanamo._
+import models.Forms.{ EventFormData, ProjectFormData, TalkFormData }
+import org.joda.time.DateTime
 import automagic._
 
-object DbFormats {
-  implicit val jodaStringFormat =
-    DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.UTC))(_.toString)
-}
-
 case class Author(
-  id: String,
   name: String,
   url: Option[String],
   avatar: Option[String])
-
-object Author {
-  def apply(authorData: AuthorFormData): Author = {
-    transform[AuthorFormData, Author](authorData,
-      "id" -> UUID.randomUUID().toString
-    )
-  }
-}
 
 case class Talk(
   id: String,
@@ -42,8 +27,7 @@ object Talk {
       case None => UUID.randomUUID().toString
     }
     transform[TalkFormData, Talk](talkData,
-      "id" -> someId,
-      "authors" -> talkData.authors.foldLeft(Seq.empty: Seq[Author]) { (seq, authorFormData) => seq :+ Author(authorFormData) }
+      "id" -> someId
     )
   }
 }
