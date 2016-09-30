@@ -14,13 +14,13 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
 
   private lazy val dynamoDbService = new DynamoDbService(dynamoClient, talksTableName, eventsTableName, projectsTableName)
 
-  def index = Action { req =>
+  def index = Action { implicit reqest =>
     val jsFileName = "bundle.js"
     val jsLocation = routes.Assets.versioned(jsFileName).toString
     Ok(views.html.app("Digital Department Website", jsLocation))
   }
 
-  def talks() = Action {
+  def talks() = Action { implicit request =>
     val talksList = dynamoDbService.scanTalks()
     Ok(views.html.talks(talksList))
   }
@@ -58,7 +58,12 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
     )
   }
 
-  def events() = Action {
+  def deleteTalk(id: String) = Action { implicit request =>
+    dynamoDbService.deleteTalk(id)
+    Redirect(routes.Application.talks())
+  }
+
+  def events() = Action { implicit request =>
     val eventsList = dynamoDbService.scanEvents()
     Ok(views.html.events(eventsList))
   }
@@ -97,7 +102,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
     )
   }
 
-  def projects() = Action {
+  def projects() = Action { implicit request =>
     val projectsList = dynamoDbService.scanProjects()
     val activeProjectsList = projectsList.filter(_.status == Project.Active)
     val incubatedProjectsList = projectsList.filter(_.status == Project.Incubated)

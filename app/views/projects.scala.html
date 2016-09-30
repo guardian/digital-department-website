@@ -1,4 +1,4 @@
-@(activeProjects: Seq[Project], incubatedProjects: Seq[Project])
+@(activeProjects: Seq[Project], incubatedProjects: Seq[Project])(implicit req: RequestHeader)
 @allProjects = @{Map(Project.Active -> activeProjects, Project.Incubated -> incubatedProjects)}
 
 @layout("Projects") {

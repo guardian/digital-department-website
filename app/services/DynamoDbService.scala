@@ -24,6 +24,10 @@ class DynamoDbService(client: AmazonDynamoDB, talksTableName: String, eventsTabl
     Scanamo.query[Talk](client)(talksTableName)('id -> id).flatMap(_.toOption).headOption
   }
 
+  def deleteTalk(id: String): Unit = {
+    Scanamo.delete(client)(talksTableName)('id -> id)
+  }
+
   // EVENTS operations
   def scanEvents(): Seq[Event] = {
     Scanamo.scan[Event](client)(eventsTableName).flatMap(_.toOption)
