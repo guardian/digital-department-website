@@ -1,7 +1,6 @@
 package services
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.gu.scanamo.query.UniqueKey
 import com.gu.scanamo.{ DynamoFormat, Scanamo }
 import com.gu.scanamo.syntax._
 import models._
@@ -10,7 +9,7 @@ import org.joda.time.{ DateTimeZone, DateTime }
 class DynamoDbService(client: AmazonDynamoDB, talksTableName: String, eventsTableName: String, projectsTableName: String) {
 
   implicit val jodaStringFormat =
-    DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.UTC))(_.toString)
+    DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.getDefault))(_.toString)
 
   // TALKS operations
   def scanTalks(): Seq[Talk] = {

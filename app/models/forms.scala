@@ -7,27 +7,14 @@ object Forms {
   case class TalkFormData(
     title: String,
     url: String,
-    authors: Seq[AuthorFormData],
+    authors: Seq[Author],
     location: String,
     date: DateTime,
     thumbnail: String)
 
   object TalkFormData {
     def apply(talk: Talk): TalkFormData = {
-      transform[Talk, TalkFormData](talk,
-        "authors" -> talk.authors.foldLeft(Seq.empty: Seq[AuthorFormData]) { (seq, author) => seq :+ AuthorFormData(author) }
-      )
-    }
-  }
-
-  case class AuthorFormData(
-    name: String,
-    url: Option[String],
-    avatar: Option[String])
-
-  object AuthorFormData {
-    def apply(author: Author): AuthorFormData = {
-      transform[Author, AuthorFormData](author)
+      transform[Talk, TalkFormData](talk)
     }
   }
 
