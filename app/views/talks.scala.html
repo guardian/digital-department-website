@@ -1,4 +1,4 @@
-@(talks: Seq[Talk])
+@(talks: Seq[Talk])(implicit req: RequestHeader)
 
 @layout("Talks") {
     <h1>Talks</h1>
@@ -14,7 +14,7 @@
             </tr>
         </thead>
         @talks.map{ talk =>
-            <tr>
+            <tr id="@talk.id">
                 <td>@talk.title</td>
                 <td>@talk.date.toString("dd-MM-yyyy")</td>
                 <td>@talk.location</td>
@@ -24,8 +24,10 @@
                 }
                 </td>
                 <td>
-                    <a href="@routes.Application.editTalkPage(talk.id)">Edit</a>
-                    <a href="#">Delete</a>
+                    <button class="btn btn-primary btn-sm">
+                        <a href="@routes.Application.editTalkPage(talk.id)" style="color: white;">Edit</a>
+                    </button>
+                    <button id="delete-talk" class="btn btn-secondary btn-sm" value="@talk.id">Delete</button>
                 </td>
             </tr>
         }

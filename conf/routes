@@ -7,6 +7,7 @@ GET     /talks/create               controllers.Application.createTalkPage
 POST    /talks/create               controllers.Application.createTalk
 GET     /talks/:id/edit             controllers.Application.editTalkPage(id: String)
 POST    /talks/:id/edit             controllers.Application.editTalk(id: String)
+POST    /talks/:id/delete           controllers.Application.deleteTalk(id: String)
 
 GET     /events                     controllers.Application.events
 GET     /events/create              controllers.Application.createEventPage
