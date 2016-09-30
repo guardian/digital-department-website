@@ -10,3 +10,9 @@ $(document).on("click", ".btn-add-author", function() {
     $(".author").last().find("input").val("").end()
 
 });
+
+$(document).on("click", ".btn-remove-author", function() {
+    if( !$(".author").is(":only-child")){
+        $(".author").last().remove();
+    }
+});

@@ -1,6 +1,6 @@
 @(nameField: Field, nameArgs: (Symbol,Any)*)(urlField: Field, urlArgs: (Symbol,Any)*)(avatarField: Field, avatarArgs: (Symbol,Any)*)(globalArgs: (Symbol,Any)*)(implicit fc: b4.B4FieldConstructor, messages: Messages)
 @b4.multifield(nameField, urlField, avatarField)(globalArgs, nameArgs ++ urlArgs ++ avatarArgs) { implicit cfc =>
-    <div class="intput-group author__fields" id="author-group-0" @toHtmlArgs(bs.Args.inner(globalArgs).toMap)>
+    <div class="input-group author__fields" id="author-group-0" @toHtmlArgs(bs.Args.inner(globalArgs).toMap)>
         @b4.text(nameField, nameArgs:_*)
         @b4.url(urlField, urlArgs:_*)
         @b4.text(avatarField, avatarArgs:_*)
