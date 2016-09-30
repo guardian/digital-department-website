@@ -102,6 +102,11 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
     )
   }
 
+  def deleteEvent(id: String) = Action { implicit request =>
+    dynamoDbService.deleteEvent(id)
+    Redirect(routes.Application.events())
+  }
+
   def projects() = Action { implicit request =>
     val projectsList = dynamoDbService.scanProjects()
     val activeProjectsList = projectsList.filter(_.status == Project.Active)
@@ -141,6 +146,11 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
         Redirect(routes.Application.projects())
       }
     )
+  }
+
+  def deleteProject(id: String) = Action { implicit request =>
+    dynamoDbService.deleteProject(id)
+    Redirect(routes.Application.projects())
   }
 
 }

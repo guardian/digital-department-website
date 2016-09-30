@@ -41,6 +41,10 @@ class DynamoDbService(client: AmazonDynamoDB, talksTableName: String, eventsTabl
     Scanamo.query[Event](client)(eventsTableName)('id -> id).flatMap(_.toOption).headOption
   }
 
+  def deleteEvent(id: String): Unit = {
+    Scanamo.delete(client)(eventsTableName)('id -> id)
+  }
+
   // PROJECTS operations
   def scanProjects(): Seq[Project] = {
     Scanamo.scan[Project](client)(projectsTableName).flatMap(_.toOption)
@@ -52,5 +56,9 @@ class DynamoDbService(client: AmazonDynamoDB, talksTableName: String, eventsTabl
 
   def queryProjects(id: String): Option[Project] = {
     Scanamo.query[Project](client)(projectsTableName)('id -> id).flatMap(_.toOption).headOption
+  }
+
+  def deleteProject(id: String): Unit = {
+    Scanamo.delete(client)(projectsTableName)('id -> id)
   }
 }
