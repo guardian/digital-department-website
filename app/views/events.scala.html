@@ -10,17 +10,18 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
         @events.map{ event =>
-            <tr>
+            <tr id="@event.id">
                 <td><img alt="@event.title" src="@event.thumbnail" height="20"></td>
                 <td><a href="@event.url">@event.title</a></td>
                 <td>@event.description</td>
                 <td>@event.date.toString("dd-MM-yyyy")</td>
                 <td>
-                    <a href="@routes.Application.editEventPage(event.id)">Edit</a>
-                    <a href="#">Delete</a>
+                    <a class="btn btn-primary btn-sm" href="@routes.Application.editEventPage(event.id)">Edit</a>
+                    <button id="delete-event" class="btn btn-secondary btn-sm" value="@event.id">Delete</button>
                 </td>
             </tr>
         }

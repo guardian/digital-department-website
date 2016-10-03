@@ -11,15 +11,16 @@
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             @projectList.map{ project =>
-                <tr>
+                <tr id="@project.id">
                     <td><a href="@project.url">@project.title</a></td>
                     <td>@project.description</td>
                     <td>
-                        <a href="@routes.Application.editProjectPage(project.id)">Edit</a>
-                        <a href="#">Delete</a>
+                        <a class="btn btn-primary btn-sm" href="@routes.Application.editProjectPage(project.id)">Edit</a>
+                        <button id="delete-project" class="btn btn-secondary btn-sm" value="@project.id">Delete</button>
                     </td>
                 </tr>
             }

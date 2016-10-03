@@ -5,7 +5,9 @@
         <meta charset="UTF-8">
 
          @helper.javascriptRouter("jsRoutes")(
-             routes.javascript.Application.deleteTalk
+             routes.javascript.Application.deleteTalk,
+             routes.javascript.Application.deleteEvent,
+             routes.javascript.Application.deleteProject
          )
 
         <title>@title</title>
