@@ -1,9 +1,8 @@
 @(nameField: Field, nameArgs: (Symbol,Any)*)(urlField: Field, urlArgs: (Symbol,Any)*)(avatarField: Field, avatarArgs: (Symbol,Any)*)(globalArgs: (Symbol,Any)*)(implicit fc: b4.B4FieldConstructor, messages: Messages)
 @b4.multifield(nameField, urlField, avatarField)(globalArgs, nameArgs ++ urlArgs ++ avatarArgs) { implicit cfc =>
-    <div id="author-group-0" class="input-group" @toHtmlArgs(bs.Args.inner(globalArgs).toMap)>
+    <div class="input-group author__fields" id="author-group-0" @toHtmlArgs(bs.Args.inner(globalArgs).toMap)>
         @b4.text(nameField, nameArgs:_*)
         @b4.url(urlField, urlArgs:_*)
         @b4.text(avatarField, avatarArgs:_*)
-        @b4.button('class -> "btn btn-default btn-add-author", 'name -> "0") { Add author }
     </div>
 }
