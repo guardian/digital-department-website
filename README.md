@@ -2,7 +2,7 @@
 
 A digital fellowship scheme project.
 
-A play app with react frontend to provide information on what it is like to work at Guardian Digital.
+A play app to provide information on what it is like to work at Guardian Digital.
 
 * List of recent/future talks by current employees.
 * List of open source projects created / incubated by the Guardian.
