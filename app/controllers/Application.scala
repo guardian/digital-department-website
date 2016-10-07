@@ -15,9 +15,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   private lazy val dynamoDbService = new DynamoDbService(dynamoClient, talksTableName, eventsTableName, projectsTableName)
 
   def index = Action { implicit reqest =>
-    val jsFileName = "bundle.js"
-    val jsLocation = routes.Assets.versioned(jsFileName).toString
-    Ok(views.html.app("Digital Department Website", jsLocation))
+    Ok(views.html.app("Digital Department Website"))
   }
 
   def talks() = Action { implicit request =>

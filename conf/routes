@@ -1,6 +1,5 @@
 # Web endpoints
 GET     /                           controllers.Application.index
-GET     /join-the-team              controllers.Application.index
 
 GET     /talks                      controllers.Application.talks
 GET     /talks/create               controllers.Application.createTalkPage

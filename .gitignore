@@ -1,6 +1,5 @@
 logs
 target
-node_modules/
 
 /.idea
 /.idea_modules
@@ -8,6 +7,4 @@ node_modules/
 /.settings
 /RUNNING_PID
 
-public/bundle.js
-public/main.css
 project/project
