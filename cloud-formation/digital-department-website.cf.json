@@ -48,9 +48,9 @@
         "AvailabilityZones" : { "Fn::GetAZs" : "eu-west-1" },
         "VPCZoneIdentifier" : { "Ref" : "Subnets" },
         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
-        "MinSize" : "1",
-        "MaxSize" : "3",
-        "DesiredCapacity" : "1",
+        "MinSize" : "3",
+        "MaxSize" : "6",
+        "DesiredCapacity" : "3",
         "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ],
         "HealthCheckType" : "ELB",
         "HealthCheckGracePeriod" : 300,
@@ -76,14 +76,10 @@
             "#!/bin/bash -ev",
             "apt-get -y update",
             "apt-get -y upgrade",
-            "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
-            "mkdir /etc/gu",
-            "cat >/etc/gu/explainer.stage.conf << EOF",
-            { "Fn::Join": [ "", [ "stage=", { "Ref": "Stage"} ] ] },
-            "EOF",
+            "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t digital-fellows || true \n",
 
-            {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/guardian-digital-website-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
-            "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
+            {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/guardian-digital-web-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "digital-department-website/digital-department-website_1.0_all.deb"]]},
+            "dpkg -i digital-department-website_1.0_all.deb"
           ]]
         }}
       }
