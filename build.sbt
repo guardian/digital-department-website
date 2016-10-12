@@ -6,7 +6,7 @@ def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, RiffRaffArtifact, JDebPackaging)
     .settings(
-      play.sbt.PlayImport.PlayKeys.playDefaultPort := 8460
+      play.sbt.PlayImport.PlayKeys.playDefaultPort := 9000
     )
 
 scalaVersion := "2.11.8"
