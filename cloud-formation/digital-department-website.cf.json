@@ -173,7 +173,7 @@
         "SecurityGroups" : [ { "Ref" : "LoadBalancerSecurityGroup" } ],
         "Subnets" : { "Ref" : "Subnets" },
         "HealthCheck" : {
-          "Target" : "HTTP:9000/healthcheck",
+          "Target" : "HTTP:9000",
           "HealthyThreshold" : "2",
           "UnhealthyThreshold" : "10",
           "Interval" : "10",
