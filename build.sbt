@@ -11,6 +11,23 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, RiffRaffArtifact
 
 scalaVersion := "2.11.8"
 
+javaOptions in Universal ++= Seq(
+  "-Dpidfile.path=/dev/null",
+  "-J-XX:MaxRAMFraction=2",
+  "-J-XX:InitialRAMFraction=2",
+  "-J-XX:MaxMetaspaceSize=500m",
+  "-J-XX:+PrintGCDetails",
+  "-J-XX:+PrintGCDateStamps",
+  s"-J-Xloggc:/var/log/${name.value}/gc.log"
+)
+
+maintainer := "Anne Byrne <anne.byrne@theguardian.com>"
+
+packageSummary := "Digital Department Website"
+
+packageDescription := """The Guardian Digital website for Dig Dev and Enterprise Technology"""
+
+
 libraryDependencies ++= Seq(
   ws
 )
