@@ -48,3 +48,4 @@ riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV")
 riffRaffManifestVcsUrl := "git@github.com:guardian/digital-department-website.git"
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
+riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("Unknown_branch")

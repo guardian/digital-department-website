@@ -77,9 +77,15 @@
             "apt-get -y update",
             "apt-get -y upgrade",
             "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t digital-department-website || true \n",
+            "mkdir /etc/gu",
+
+            {"Fn::Join":["", ["aws --region ", { "Ref": "AWS::Region" }, " s3 cp s3://guardian-digital-private/", "/guardian-digital-keys.conf /etc/gu"]]},
 
             {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/guardian-digital-web-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "digital-department-website/digital-department-website_1.0_all.deb"]]},
-            "dpkg -i digital-department-website_1.0_all.deb"
+            "dpkg -i digital-department-website_1.0_all.deb",
+
+            "chown digital-department-website /etc/gu/guardian-digital-keys.conf",
+            "chmod 0600 /etc/gu/guardian-digital-keys.conf"
           ]]
         }}
       }
@@ -116,13 +122,14 @@
             }
           },
           {
-            "PolicyName": "DynamoPolicy",
+            "PolicyName": "PrivateKeysBucket",
             "PolicyDocument": {
+              "Version": "2012-10-17",
               "Statement": [
                 {
                   "Effect": "Allow",
-                  "Action": [ "dynamodb:*" ],
-                  "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explainers-", { "Ref": "Stage" } ] ] } ]
+                  "Action": ["s3:GetObject"],
+                  "Resource": ["arn:aws:s3:::guardian-digital-private/guardian-digital-keys.conf"]
                 }
               ]
             }
