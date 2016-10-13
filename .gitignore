@@ -8,3 +8,6 @@ target
 /RUNNING_PID
 
 project/project
+public/stylesheets
+
+.sass-cache/
