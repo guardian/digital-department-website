@@ -1,19 +1,19 @@
 {
-    "defaultStacks": ["guardian-digital"],
+    "defaultStacks": ["guardian-digital-web"],
     "packages":{
-        "guardian-digital-website":{
+        "digital-department-website":{
             "type":"autoscaling",
             "data":{
-                "bucket": "guardian-digital-dist"
+                "bucket": "guardian-digital-web-dist"
             }
         }
     },
     "recipes":{
         "default":{
-            "actionsBeforeApp": ["guardian-digital.uploadArtifacts", "guardian-digital.deploy"]
+            "actionsBeforeApp": ["digital-department-website.uploadArtifacts", "digital-department-website.deploy"]
         },
         "artifactUploadOnly": {
-            "actions": [ "guardian-digital.uploadArtifacts" ]
+            "actions": [ "digital-department-website.uploadArtifacts" ]
         }
     }
 }
