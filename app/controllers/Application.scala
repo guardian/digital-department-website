@@ -15,7 +15,7 @@ class Application(dynamoClient: AmazonDynamoDB, talksTableName: String, eventsTa
   private lazy val dynamoDbService = new DynamoDbService(dynamoClient, talksTableName, eventsTableName, projectsTableName)
 
   def index = Action { implicit reqest =>
-    Ok(views.html.app("Digital Department Website"))
+    Ok(views.html.index("Digital Department Website"))
   }
 
   def talks() = Action { implicit request =>
