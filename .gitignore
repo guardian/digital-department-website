@@ -9,5 +9,8 @@ target
 
 project/project
 .sass-cache
-.sass-cache/*
 .DS_Store
+public/stylesheets
+
+.sass-cache/
+
