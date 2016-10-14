@@ -8,3 +8,6 @@ target
 /RUNNING_PID
 
 project/project
+.sass-cache
+.sass-cache/*
+.DS_Store
