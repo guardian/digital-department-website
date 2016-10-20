@@ -1,0 +1,42 @@
+
+@function hundred-percent-from($value, $percent) {
+    @return ($value / $percent) * 100;
+}
+
+@function percent-of($value, $percent) {
+    @return $value * ($percent / 100);
+}
+
+@mixin vw-range($property, $percent, $min, $max) {
+    // Min
+    #{$property}: $min;
+
+    // Middle range
+    @include breakpoint(($min / $percent) * 100) {
+        // TODO: Why different?
+        #{$property}: #{$percent}vw;
+    }
+
+    // Max
+    @include breakpoint(($max / $percent) * 100) {
+        #{$property}: $max;
+    }
+}
+
+@mixin font-size($p, $min, $max) {
+    @include vw-range(font-size, $p, $min, $max);
+}
+
+@mixin width($p, $min, $max) {
+    @include vw-range(width, $p, $min, $max);
+}
+
+@mixin fix-aspect-ratio($width, $height, $startingWidth: 100%) {
+    // To get this working, position the child element
+    // to 'absolute' in the top left corner
+    $height: ($height / $width) * $startingWidth;
+    width: $startingWidth;
+    padding-bottom: $height;
+    position: relative;
+    overflow: hidden;
+}

@@ -8,6 +8,8 @@ target
 /RUNNING_PID
 
 project/project
-public/stylesheets
-
+.sass-cache
+.DS_Store
+public/stylesheets/*
 .sass-cache/
+

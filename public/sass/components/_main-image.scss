@@ -1,0 +1,61 @@
+// TODO: Bemify?
+$x: 650px;
+
+.main-image {
+    @extend .trailing-margin;
+
+    @include breakpoint($x) {
+        // Position `.main-image-overlay` relative to this
+        position: relative;
+        padding-bottom: $trailing-margin-height;
+    }
+
+    // If there is no `object-fit`, hide the image.
+    .no-object-fit & {
+        // Because the image is no longer as tall, we must stack the overlay
+        // above the image instead of on top.
+        @media (max-width: $desktop) {
+            @include unset(position);
+
+            .main-image__overlay {
+                @include unset(position);
+            }
+
+            .main-image__overlay__inner {
+                @include unset(width);
+            }
+        }
+    }
+}
+
+.main-image__img {
+    .object-fit & {
+        object-fit: cover;
+        height: 50vmin;
+        min-height: 40vmax;
+        // Reset from UA – by default the aspect ratio is maintained. We don't
+        // want this because we are using `object-fit`.
+        width: 100%;
+
+        @include breakpoint($desktop) {
+            // Reset
+            height: 60vmin;
+            min-height: 30vmax;
+        }
+    }
+}
+
+.main-image__overlay {
+    @include breakpoint($x) {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+}
+
+.main-image__overlay__inner {
+    @extend .page-banner;
+    @include breakpoint($x) {
+        width: 28em;
+    }
+}

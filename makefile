@@ -10,3 +10,4 @@ help:
 watch:
 	@echo 'Now watching! 🎃' & \
 	sass --watch public/sass:public/stylesheets
+
